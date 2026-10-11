@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tug'ilgan kuning muborak!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;900&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #2a3bd6;
+    --bg-deep: #1f2db0;
+    --ink: #14143a;
+    --paper: #ffffff;
+    --pink: #ff9ec4;
+    --yellow: #ffd66b;
+    --mint: #7be0c3;
+    --text: #ffffff;
+    --muted: rgba(255,255,255,.78);
+    --card: rgba(255,255,255,.12);
+    --line: rgba(255,255,255,.35);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) { --bg: #1b2699; --bg-deep: #131b73; }
+  }
+  :root[data-theme="dark"] { --bg: #1b2699; --bg-deep: #131b73; }
+  html { height: 100%; scroll-padding-top: env(safe-area-inset-top, 0px); }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100%;
+    background: radial-gradient(120% 80% at 50% 0%, var(--bg) 0%, var(--bg-deep) 100%);
+    color: var(--text);
+    font-family: "Onest", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    font-size: 1.0625rem; line-height: 1.5;
+    overflow-x: hidden;
+  }
+  main { max-width: 540px; margin: 0 auto; padding: 28px 20px 40px; text-align: center; }
+  h1 {
+    font-family: "Unbounded", "Arial Black", system-ui, sans-serif;
+    font-weight: 900; line-height: 1.08; letter-spacing: -.01em;
+    font-size: clamp(1.9rem, 9vw, 3.1rem);
+    margin: 8px 0 6px; text-wrap: balance;
+  }
+  .sub { color: var(--muted); margin: 0 0 8px; min-height: 1.6em; }
+  .stage { position: relative; margin: 8px auto 0; width: min(100%, 380px); }
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+
+  .candle { cursor: pointer; outline: none; }
+  .candle:focus-visible .wick-hit { stroke: var(--paper); stroke-width: 3; }
+  .wick-hit { fill: transparent; stroke: transparent; }
+  .flame { transform-box: fill-box; transform-origin: 50% 100%; animation: flicker 1.1s ease-in-out infinite alternate; transition: opacity .25s, transform .25s; }
+  .candle:nth-child(2n) .flame { animation-duration: .9s; }
+  .candle:nth-child(3n) .flame { animation-duration: 1.3s; }
+  .candle.out .flame { opacity: 0; transform: scale(.2); animation: none; }
+  .smoke { opacity: 0; transform-box: fill-box; transform-origin: 50% 100%; }
+  .candle.out .smoke { animation: smoke 1.4s ease-out forwards; }
+  @keyframes flicker { from { transform: scale(1) rotate(-3deg); } to { transform: scale(1.08, .94) rotate(3deg); } }
+  @keyframes smoke { 0% { opacity: .8; transform: translateY(0) scale(.6); } 100% { opacity: 0; transform: translateY(-26px) scale(1.4); } }
+
+  .actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 18px 0 4px; }
+  button {
+    font: inherit; font-weight: 600; cursor: pointer;
+    border: 2px solid var(--paper); background: transparent; color: var(--paper);
+    padding: 12px 20px; border-radius: 999px; min-height: 48px;
+    transition: background .15s, color .15s, transform .1s;
+  }
+  button.primary { background: var(--yellow); border-color: var(--yellow); color: var(--ink); }
+  button:hover { background: var(--paper); color: var(--ink); }
+  button.primary:hover { background: #ffe38f; border-color: #ffe38f; }
+  button:active { transform: scale(.97); }
+  button:focus-visible, input:focus-visible, textarea:focus-visible, summary:focus-visible { outline: 3px solid var(--mint); outline-offset: 3px; }
+  button[hidden] { display: none; }
+
+  .wish {
+    margin: 22px auto 0; padding: 22px 20px; border-radius: 22px;
+    background: var(--paper); color: var(--ink); text-align: left;
+    display: none;
+  }
+  .wish.show { display: block; animation: pop .45s cubic-bezier(.2,1.3,.4,1); }
+  .wish h2 { font-family: "Unbounded", "Arial Black", system-ui, sans-serif; font-size: 1.15rem; margin: 0 0 8px; }
+  .wish p { margin: 0; white-space: pre-line; }
+  @keyframes pop { from { opacity: 0; transform: translateY(14px) scale(.96); } to { opacity: 1; transform: none; } }
+
+  details { margin: 34px auto 0; text-align: left; border-top: 1px solid var(--line); padding-top: 16px; }
+  summary { cursor: pointer; font-weight: 600; padding: 6px 0; }
+  label { display: block; margin: 14px 0 6px; font-weight: 500; color: var(--muted); }
+  input, textarea {
+    width: 100%; font: inherit; color: var(--ink); background: var(--paper);
+    border: 2px solid transparent; border-radius: 14px; padding: 12px 14px;
+  }
+  textarea { min-height: 96px; resize: vertical; }
+  .hint { color: var(--muted); font-size: .92rem; margin: 10px 0 0; }
+
+  #confetti { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
+  @media (prefers-reduced-motion: reduce) {
+    .flame, .candle.out .smoke, .wish.show { animation: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti" aria-hidden="true"></canvas>
+<main>
+  <h1 id="title">Tug'ilgan kuning muborak!</h1>
+  <p class="sub" id="status" aria-live="polite"></p>
+
+  <div class="stage">
+    <svg viewBox="0 0 320 300" role="img" aria-label="Beshta shamli tort">
+      <!-- plate -->
+      <ellipse cx="160" cy="262" rx="150" ry="22" fill="#14143a" opacity=".35"/>
+      <ellipse cx="160" cy="254" rx="146" ry="20" fill="#ffffff"/>
+      <!-- bottom tier -->
+      <rect x="50" y="170" width="220" height="82" rx="14" fill="#ff9ec4"/>
+      <path d="M50 184c0-8 6-14 14-14h192c8 0 14 6 14 14v6c-9 0-9 14-18 14s-9-10-18-10-9 16-18 16-9-12-18-12-9 14-18 14-9-12-18-12-9 14-18 14-9-12-18-12-9 12-18 12-9-14-18-14-9 10-18 10-9-14-18-14z" fill="#ffffff"/>
+      <circle cx="90" cy="226" r="5" fill="#ffd66b"/><circle cx="130" cy="232" r="5" fill="#7be0c3"/>
+      <circle cx="170" cy="224" r="5" fill="#ffd66b"/><circle cx="210" cy="232" r="5" fill="#7be0c3"/>
+      <circle cx="244" cy="224" r="5" fill="#ffd66b"/>
+      <!-- top tier -->
+      <rect x="92" y="112" width="136" height="64" rx="12" fill="#ffd66b"/>
+      <path d="M92 124c0-7 5-12 12-12h112c7 0 12 5 12 12v4c-8 0-8 12-16 12s-8-9-16-9-8 13-16 13-8-11-16-11-8 13-16 13-8-11-16-11-8 11-16 11-8-12-16-12z" fill="#ffffff"/>
+      <!-- candles -->
+      <g id="candles">
+        <g class="candle" tabindex="0" role="button" aria-label="Shamni o'chirish">
+          <rect x="116" y="76" width="9" height="38" rx="3" fill="#7be0c3"/>
+          <rect x="116" y="88" width="9" height="5" fill="#fff" opacity=".6"/><rect x="116" y="100" width="9" height="5" fill="#fff" opacity=".6"/>
+          <path class="flame" d="M120.5 48c7 9 9 15 0 26-9-11-7-17 0-26z" fill="#ff7a3d"/>
+          <path class="smoke" d="M120.5 70c-6-8 6-12 0-20" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <rect class="wick-hit" x="106" y="40" width="29" height="76" rx="8"/>
+        </g>
+        <g class="candle" tabindex="0" role="button" aria-label="Shamni o'chirish">
+          <rect x="140" y="76" width="9" height="38" rx="3" fill="#ff9ec4"/>
+          <rect x="140" y="88" width="9" height="5" fill="#fff" opacity=".6"/><rect x="140" y="100" width="9" height="5" fill="#fff" opacity=".6"/>
+          <path class="flame" d="M144.5 48c7 9 9 15 0 26-9-11-7-17 0-26z" fill="#ff7a3d"/>
+          <path class="smoke" d="M144.5 70c-6-8 6-12 0-20" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <rect class="wick-hit" x="130" y="40" width="29" height="76" rx="8"/>
+        </g>
+        <g class="candle" tabindex="0" role="button" aria-label="Shamni o'chirish">
+          <rect x="164" y="76" width="9" height="38" rx="3" fill="#2a3bd6"/>
+          <rect x="164" y="88" width="9" height="5" fill="#fff" opacity=".6"/><rect x="164" y="100" width="9" height="5" fill="#fff" opacity=".6"/>
+          <path class="flame" d="M168.5 48c7 9 9 15 0 26-9-11-7-17 0-26z" fill="#ff7a3d"/>
+          <path class="smoke" d="M168.5 70c-6-8 6-12 0-20" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <rect class="wick-hit" x="154" y="40" width="29" height="76" rx="8"/>
+        </g>
+        <g class="candle" tabindex="0" role="button" aria-label="Shamni o'chirish">
+          <rect x="188" y="76" width="9" height="38" rx="3" fill="#ff9ec4"/>
+          <rect x="188" y="88" width="9" height="5" fill="#fff" opacity=".6"/><rect x="188" y="100" width="9" height="5" fill="#fff" opacity=".6"/>
+          <path class="flame" d="M192.5 48c7 9 9 15 0 26-9-11-7-17 0-26z" fill="#ff7a3d"/>
+          <path class="smoke" d="M192.5 70c-6-8 6-12 0-20" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <rect class="wick-hit" x="178" y="40" width="29" height="76" rx="8"/>
+        </g>
+        <g class="candle" tabindex="0" role="button" aria-label="Shamni o'chirish">
+          <rect x="212" y="76" width="9" height="38" rx="3" fill="#7be0c3"/>
+          <rect x="212" y="88" width="9" height="5" fill="#fff" opacity=".6"/><rect x="212" y="100" width="9" height="5" fill="#fff" opacity=".6"/>
+          <path class="flame" d="M216.5 48c7 9 9 15 0 26-9-11-7-17 0-26z" fill="#ff7a3d"/>
+          <path class="smoke" d="M216.5 70c-6-8 6-12 0-20" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/>
+          <rect class="wick-hit" x="202" y="40" width="29" height="76" rx="8"/>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div class="actions">
+    <button class="primary" id="blowAll" type="button">Hammasini puflash</button>
+    <button id="relight" type="button" hidden>Qayta yoqish</button>
+  </div>
+
+  <section class="wish" id="wish" aria-live="polite">
+    <h2 id="wishTitle">Tilak tilang</h2>
+    <p id="wishText"></p>
+  </section>
+
+  <details>
+    <summary>Tabrikni o'zgartirish</summary>
+    <label for="nameInput">Kimning tug'ilgan kuni?</label>
+    <input id="nameInput" type="text" maxlength="30" placeholder="Masalan: Madina" autocomplete="off">
+    <label for="msgInput">Tabrik matni</label>
+    <textarea id="msgInput" maxlength="400" placeholder="Sog'-salomat bo'ling, orzularingiz ushalsin…"></textarea>
+    <p class="hint">Ism va matn sahifa havolasiga saqlanadi: havolani nusxalab yuborsangiz, boshqalar ham shu tabrikni ko'radi.</p>
+  </details>
+</main>
+
+<script>
+(function () {
+  var DEFAULT_MSG = "Yangi yoshingiz sizga sog'lik, quvonch va katta omad olib kelsin.\nHar kuningiz bugungidek bayram bo'lsin!";
+  var candles = Array.prototype.slice.call(document.querySelectorAll('.candle'));
+  var statusEl = document.getElementById('status');
+  var titleEl = document.getElementById('title');
+  var wishEl = document.getElementById('wish');
+  var wishText = document.getElementById('wishText');
+  var wishTitle = document.getElementById('wishTitle');
+  var blowBtn = document.getElementById('blowAll');
+  var relightBtn = document.getElementById('relight');
+  var nameInput = document.getElementById('nameInput');
+  var msgInput = document.getElementById('msgInput');
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var name = '', msg = '';
+
+  function readHash() {
+    try {
+      var p = new URLSearchParams(location.hash.replace(/^#/, ''));
+      name = (p.get('name') || '').slice(0, 30);
+      msg = (p.get('msg') || '').slice(0, 400);
+    } catch (e) {}
+  }
+  function writeHash() {
+    try {
+      var p = new URLSearchParams();
+      if (name) p.set('name', name);
+      if (msg) p.set('msg', msg);
+      var s = p.toString();
+      history.replaceState(null, '', s ? '#' + s : location.pathname + location.search);
+    } catch (e) {}
+  }
+  function render() {
+    titleEl.textContent = name ? "Tug'ilgan kuning muborak, " + name + '!' : "Tug'ilgan kuning muborak!";
+    document.title = name ? name + " — tug'ilgan kuning muborak!" : "Tug'ilgan kuning muborak!";
+    wishTitle.textContent = name ? 'Tilagingiz qabul, ' + name : 'Tilagingiz qabul';
+    wishText.textContent = msg || DEFAULT_MSG;
+  }
+  function lit() { return candles.filter(function (c) { return !c.classList.contains('out'); }).length; }
+
+  function update(fromUser) {
+    var n = lit();
+    if (n === candles.length) {
+      statusEl.textContent = 'Shamlarni o\'chirish uchun ustiga bosing';
+      wishEl.classList.remove('show'); relightBtn.hidden = true; blowBtn.hidden = false;
+    } else if (n > 0) {
+      statusEl.textContent = n + " ta sham qoldi";
+      relightBtn.hidden = true; blowBtn.hidden = false;
+    } else {
+      statusEl.textContent = 'Tilak tilashni unutmang!';
+      blowBtn.hidden = true; relightBtn.hidden = false;
+      wishEl.classList.add('show');
+      if (fromUser) { burst(); wishEl.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'nearest' }); }
+    }
+  }
+  function blow(c) { if (!c.classList.contains('out')) { c.classList.add('out'); c.setAttribute('aria-label', "Sham o'chdi"); update(true); } }
+
+  candles.forEach(function (c) {
+    c.addEventListener('click', function () { blow(c); });
+    c.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); blow(c); } });
+  });
+  blowBtn.addEventListener('click', function () {
+    var left = candles.filter(function (c) { return !c.classList.contains('out'); });
+    left.forEach(function (c, i) { setTimeout(function () { blow(c); }, reduce ? 0 : i * 140); });
+  });
+  relightBtn.addEventListener('click', function () {
+    candles.forEach(function (c) { c.classList.remove('out'); c.setAttribute('aria-label', "Shamni o'chirish"); });
+    update(false);
+  });
+
+  nameInput.addEventListener('input', function () { name = nameInput.value.trim(); render(); writeHash(); });
+  msgInput.addEventListener('input', function () { msg = msgInput.value.trim(); render(); writeHash(); });
+
+  // confetti
+  var cv = document.getElementById('confetti'), ctx = cv.getContext('2d'), parts = [], raf = null;
+  var colors = ['#ffd66b', '#ff9ec4', '#7be0c3', '#ffffff', '#ff7a3d'];
+  function size() { cv.width = window.innerWidth * (window.devicePixelRatio || 1); cv.height = window.innerHeight * (window.devicePixelRatio || 1); }
+  size(); window.addEventListener('resize', size);
+  function burst() {
+    if (reduce) return;
+    var dpr = window.devicePixelRatio || 1;
+    for (var i = 0; i < 140; i++) {
+      var a = Math.random() * Math.PI * 2, sp = 6 + Math.random() * 9;
+      parts.push({ x: cv.width / 2, y: cv.height * 0.4, vx: Math.cos(a) * sp * dpr, vy: (Math.sin(a) * sp - 6) * dpr,
+        w: (6 + Math.random() * 6) * dpr, h: (8 + Math.random() * 8) * dpr, r: Math.random() * 6, vr: (Math.random() - .5) * .4,
+        c: colors[(Math.random() * colors.length) | 0], life: 0 });
+    }
+    if (!raf) raf = requestAnimationFrame(tick);
+  }
+  function tick() {
+    ctx.clearRect(0, 0, cv.width, cv.height);
+    var g = 0.35 * (window.devicePixelRatio || 1);
+    parts = parts.filter(function (p) { return p.life < 150 && p.y < cv.height + 40; });
+    parts.forEach(function (p) {
+      p.vy += g; p.vx *= 0.99; p.x += p.vx; p.y += p.vy; p.r += p.vr; p.life++;
+      ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.r);
+      ctx.globalAlpha = Math.max(0, 1 - p.life / 150);
+      ctx.fillStyle = p.c; ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); ctx.restore();
+    });
+    if (parts.length) raf = requestAnimationFrame(tick); else { raf = null; ctx.clearRect(0, 0, cv.width, cv.height); }
+  }
+
+  readHash();
+  nameInput.value = name; msgInput.value = msg;
+  render(); update(false);
+})();
+</script>
+</body>
+</html>
